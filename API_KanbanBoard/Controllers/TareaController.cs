@@ -12,9 +12,9 @@ namespace API_KanbanBoard.Controllers
     {
         private AppDbContext _context;
 
-        public TareaController(AppDbContext context) 
+        public TareaController(AppDbContext context)
         {
-             _context = context;
+            _context = context;
         }
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace API_KanbanBoard.Controllers
         [HttpPost]
         public ActionResult<Tarea> PostTarea(Tarea tarea)
         {
-            if(tarea == null)
+            if (tarea == null)
             {
                 return BadRequest("La tarea no puede ser null");
             }
@@ -45,25 +45,43 @@ namespace API_KanbanBoard.Controllers
 
         public ActionResult<Tarea> PutTarea(int id, Tarea tarea)
         {
-            if(tarea == null ||tarea.Id != id)
+            if (tarea == null || tarea.Id != id)
             {
                 return BadRequest("Error en los datos");
             }
 
-            var TareaToUpdate = _context.Tareas.FirstOrDefault(t => t.Id == id);
-            if(TareaToUpdate == null)
+            var tareaToUpdate = _context.Tareas.FirstOrDefault(t => t.Id == id);
+            if (tareaToUpdate == null)
             {
                 return NotFound("Tarea no encontrada");
             }
-            TareaToUpdate.Titulo = tarea.Titulo;
-            TareaToUpdate.Descripcion = tarea.Descripcion;
-            TareaToUpdate.ColumnaId = tarea.ColumnaId;
+            tareaToUpdate.Titulo = tarea.Titulo;
+            tareaToUpdate.Descripcion = tarea.Descripcion;
+            tareaToUpdate.ColumnaId = tarea.ColumnaId;
 
             _context.SaveChanges();
 
             return NoContent();
 
         }
+
+
+        [HttpDelete("{id}")]
+        public ActionResult<Tarea> DeleteTarea(int id)
+        {
+            var tareaToDelete = _context.Tareas.FirstOrDefault(t =>t.Id == id);
+            if (tareaToDelete == null)
+            {
+                return BadRequest("Error en los datos");
+            }
+
+            _context.Tareas.Remove(tareaToDelete);
+            _context.SaveChanges();
+            return NoContent(); 
+
+        }
+
+
 
     }
 }
