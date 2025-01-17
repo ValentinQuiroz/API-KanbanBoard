@@ -65,6 +65,20 @@ namespace API_KanbanBoard.Controllers
 
         }
 
+        [HttpPatch("{id}")]
+
+        public ActionResult<Tarea> PatchTarea(int id, [FromBody] int nuevaColumnaId)
+        {
+            var tareaToPatch = _context.Tareas.FirstOrDefault(t => t.Id == id);
+            if(tareaToPatch == null)
+            {
+                return NotFound("Tarea no encontrada");
+            }
+            tareaToPatch.ColumnaId = nuevaColumnaId;
+            _context.SaveChanges();
+
+            return Ok(tareaToPatch);
+        }
 
         [HttpDelete("{id}")]
         public ActionResult<Tarea> DeleteTarea(int id)
@@ -80,6 +94,7 @@ namespace API_KanbanBoard.Controllers
             return NoContent(); 
 
         }
+
 
 
 
