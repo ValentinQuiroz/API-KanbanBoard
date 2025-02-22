@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace API_KanbanBoard.Controllers
 {
     [ApiController]
-    [Route("API/[controller]")]
+    [Route("api/[controller]")]
     public class ColumnaController : ControllerBase
     {
         private AppDbContext _context;
@@ -28,24 +28,6 @@ namespace API_KanbanBoard.Controllers
             }
             return Ok(columnas);
         }
-
-        /*
-         * Queda pausado de momento
-         * 
-        public ActionResult<Columna> PostColumna(Columna columna)
-        {
-            if (columna == null)
-            {
-                return BadRequest("La columna no puede ser null");
-            }
-
-            _context.Columnas.Add(columna);
-            _context.SaveChanges();
-            return CreatedAtAction("GetColumna", new { id = columna.Id }, columna);
-        }
-        */
-
-
 
     }
 }

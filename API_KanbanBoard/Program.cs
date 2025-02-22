@@ -1,5 +1,6 @@
 using API_KanbanBoard.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +12,11 @@ builder.Services.AddCors(options =>
             .WithOrigins("http://localhost:3000")   //Origen permitido
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials(); // Importante cuando usas withCredentials: true
+            .AllowCredentials(); // Importante cuando se usa withCredentials: true
     });
 
 });
-//
 
-// Add services to the container.
 // variable para la connection string
 var connectionString = builder.Configuration.GetConnectionString("Conexion");
 

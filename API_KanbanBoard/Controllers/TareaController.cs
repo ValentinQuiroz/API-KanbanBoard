@@ -2,11 +2,12 @@
 using API_KanbanBoard.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace API_KanbanBoard.Controllers
 {
     [ApiController]
-    [Route("API/[controller]")]
+    [Route("api/[controller]")]
     [EnableCors("AllowSpecificOrigin")]
     public class TareaController : ControllerBase
     {
@@ -23,7 +24,7 @@ namespace API_KanbanBoard.Controllers
             var tareas = _context.Tareas.ToList();
             if (!tareas.Any())
             {
-                NotFound("No hay tareas definidas");
+                return NotFound("No hay tareas definidas.");
             }
             return Ok(tareas);
         }
@@ -33,8 +34,18 @@ namespace API_KanbanBoard.Controllers
         {
             if (tarea == null)
             {
-                return BadRequest("La tarea no puede ser null");
+                return BadRequest("La tarea no puede ser null.");
             }
+
+            if (_context.Tareas.Any(t => t.Titulo.Trim() == tarea.Titulo.Trim() ))
+            {
+                return Conflict("Ya existe una tarea con ese título.");
+            }
+
+            if(tarea.Titulo.Length < 5 || tarea.Titulo.Length > 50)
+            {
+                return BadRequest("El título debe tener entre 5 y 50 caracteres.");
+            } 
 
             _context.Tareas.Add(tarea);
             _context.SaveChanges();
@@ -47,13 +58,13 @@ namespace API_KanbanBoard.Controllers
         {
             if (tarea == null || tarea.Id != id)
             {
-                return BadRequest("Error en los datos");
+                return BadRequest("Error en los datos.");
             }
 
-            var tareaToUpdate = _context.Tareas.FirstOrDefault(t => t.Id == id);
+            var tareaToUpdate = _context.Tareas.Find(id);
             if (tareaToUpdate == null)
             {
-                return NotFound("Tarea no encontrada");
+                return NotFound("Tarea no encontrada.");
             }
             tareaToUpdate.Titulo = tarea.Titulo;
             tareaToUpdate.Descripcion = tarea.Descripcion;
@@ -69,11 +80,13 @@ namespace API_KanbanBoard.Controllers
 
         public ActionResult<Tarea> PatchTarea(int id, [FromBody] int nuevaColumnaId)
         {
-            var tareaToPatch = _context.Tareas.FirstOrDefault(t => t.Id == id);
+            var tareaToPatch = _context.Tareas.Find(id);
             if(tareaToPatch == null)
             {
-                return NotFound("Tarea no encontrada");
+                return NotFound("Tarea no encontrada.");
             }
+
+
             tareaToPatch.ColumnaId = nuevaColumnaId;
             _context.SaveChanges();
 
@@ -83,19 +96,17 @@ namespace API_KanbanBoard.Controllers
         [HttpDelete("{id}")]
         public ActionResult<Tarea> DeleteTarea(int id)
         {
-            var tareaToDelete = _context.Tareas.FirstOrDefault(t =>t.Id == id);
+            var tareaToDelete = _context.Tareas.Find(id);
             if (tareaToDelete == null)
             {
-                return BadRequest("Error en los datos");
+                return NotFound("Tarea no encontrada.");
             }
 
             _context.Tareas.Remove(tareaToDelete);
             _context.SaveChanges();
+
             return NoContent(); 
-
         }
-
-
 
 
     }
